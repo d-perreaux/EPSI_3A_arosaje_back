@@ -1,0 +1,43 @@
+# Commande pour créer l'image (ne pas oublier le point!)
+docker build -f dockerfile.yaml -t my-apache2 .
+
+# Commande pour créer le container à partir de l'image (en mode deamon)
+docker run -d --name  api-arosaje -p 80:80 my-apache2
+
+# Commande pour arrêter le processus à l'interieur du conteneur (stop) mais le laisser exister sur la machine hôte
+docker stop api-arosaje
+
+# Commande pour relancer un containeur stoppé
+
+# Commande
+docker rm api-arosaje
+
+docker ps -a
+
+# commande pour naviguer dans l'image php:8.2-apache
+/!\ Attention cette commande crée un nouveau conteneur
+docker run -it --rm my-apache2 bash
+
+# Commande pour voir les extensions de l'image 
+
+php -m
+
+# pour sortir du monde bash
+/!\ Attention la commande exit supprime le conteneur pour explorer l'image
+exit
+
+# mettre image sur google cloud
+- installer google cli avec le lien https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe?hl=fr
+- créer un repo dans Artifact Registry (console cloud de google)
+
+# Commande pour mettre un tag sur l'image compatible avec Artifact Registry
+
+docker tag my-apache2 europe-west9-docker.pkg.dev/arosajecontainer/my-repo/my-apache2:TAG
+
+ # Commande pour mettre l'image sur Artifact Registry
+docker push europe-west9-docker.pkg.dev/arosajecontainer/my-repo/my-apache2:TAG
+
+- créer un service sur cloud run 
+ * récupérer l'image envoyer sur Artifact Registry
+ * paramétrer le service (attention au nom du service, du port et du paramètre de sécurité des appel)
+
