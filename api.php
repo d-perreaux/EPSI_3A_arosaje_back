@@ -1,95 +1,20 @@
 <?php
 
-    // $url = $_SERVER['REQUEST_URI'];
 
-    // $parseUrl = parse_url($url);
-    // $chemin = ltrim($parseUrl['path'], '/mspr/api.php/');
-
-    // // Paramètres de connexion à la base de données
-    // $servername = "localhost";
-    // $username = "root";
-    // $password = "";
-    // $database = "mspr";
-
-    // $conn = new mysqli($servername, $username, $password, $database);
-
-    // if ($conn->connect_error) {
-    //     die("La connexion à la base de données a echoue : " . $conn->connect_error);
-    // }
-    // header('Content-Type: application/json');
-
-
-    // if ($chemin == "") {
-    //     echo'success';
-    // } else if ($chemin == "inscription") {
-    //     $prenom = $_GET['prenom'];
-    //     $nom = $_GET['nom'];
-    //     $email = $_GET['email'];
-    //     $telephone = $_GET['telephone'];
-    //     $mdp = $_GET['mdp'];
-    //     $statut = $_GET['statut'];
-
-    //     // Préparation de la requête d'insertion
-    //     $query = "INSERT INTO `mspr`.`utilisateur` (`ut_prenom`, `ut_nom`, `ut_email`, `ut_telephone`, `ut_mdp`, `ut_statut`) VALUES (?, ?, ?, ?, ?, ?)";
-    //     $stmt = $conn->prepare($query);
-    //     $stmt->bind_param("ssssss", $prenom, $nom, $email, $telephone, $mdp, $statut);
-    //     $stmt->execute();
-
-    //     $select = "SELECT ut_id FROM utilisateur WHERE ut_nom = ? AND ut_prenom = ? AND ut_mdp = ? LIMIT 1";
-    //     $stmt = $conn->prepare($select);
-    //     $stmt->bind_param("sss", $nom, $prenom, $mdp);
-    //     $stmt->execute();
-    //     $result = $stmt->get_result();
-
-    //     if ($result->num_rows > 0) {
-    //         $row = $result->fetch_assoc();
-    //         echo json_encode($row);
-    //     } else {
-    //         echo json_encode(array('ut_id' => 'erreur'));
-    //     }
-
-    //     $stmt->close();
-    //     $conn->close();
-
-    // } else if ($chemin == "connexion") {
-    //     $email = $_POST['email'];
-    //     $mdp = $_POST['mdp'];
-    //     $query = "SELECT ut_id FROM utilisateur WHERE ut_email = '$email' AND ut_mdp = '$mdp';";
-    //     $result = $conn->query($query);
-
-    //     if ($result->num_rows > 0) {
-    //         $row = $result->fetch_assoc();
-    //         echo json_encode($row);
-    //     } else {
-    //         echo json_encode(array('ut_id' => 'refused'));
-    //     }
-    // }
-
-    // $conn->close();
-
-?>
-
-<?php
 $url = $_SERVER['REQUEST_URI'];
 
-$parseUrl = parse_url($url);
-$chemin = ltrim($parseUrl['path'], './mspr/api.php/');
+$chemin = ltrim(parse_url($url, PHP_URL_PATH), '/mspr/back/api.php/');
 
+//echo $chemin;
 
+$database = "bdd.db";
 
-// Chemin de la base de données SQLite
-$database = 'C:\xampp\htdocs\bdd.db';
-
-// Chemin de la base de données SQLite en produciton
-//$database = '/var/www/html/bdd.db';
-
-// Connexion à la base de données SQLite'
-$conn = new SQLite3($database);
+$conn = new SQLite3($database);;
 
 if (!$conn) {
     die("La connexion à la base de données a échoué");
 }
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 
 if ($chemin == "") {
     echo 'success';
@@ -127,9 +52,9 @@ if ($chemin == "") {
         echo json_encode(array('ut_id' => 'refused'));
     }
 
-} else if ($chemin == "connexion") {
-    $email = isset($_GET['email']) ? $_GET['email'] : '';
-    $mdp = isset($_GET['mdp']) ? $_GET['mdp'] : '';
+} else if ($chemin == "onnexion") {
+    $email = $_POST['email'];
+    $mdp = $_POST['mdp'];
 
     $query = "SELECT ut_id FROM Utilisateur WHERE ut_email = '$email' AND ut_mdp = '$mdp'";
     //$query = "SELECT name FROM sqlite_master WHERE type='table'";
@@ -159,6 +84,21 @@ if ($chemin == "") {
     } else {
         echo json_encode(array('return' => 'error'));
     }
+} else if ($chemin == "getUserInfo") {
+    $id = $_GET['id'];
+    
+    $query = "SELECT ut_nom, ut_prenom, ut_statut, ut_email, ut_telephone FROM Utilisateur WHERE ut_id = ". $id;
+    $result = $conn->query($query);
+
+    if ($result) {
+        $rows = array();
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $rows[] = $row;
+        }
+        echo json_encode($rows);
+    } else {
+        echo json_encode(array('return' => 'error'));
+    }
 } else if ($chemin == "getMyGarde") {
 
     $id = $_GET['id'];
@@ -175,7 +115,7 @@ if ($chemin == "") {
     } else {
         echo json_encode(array('return' => 'error'));
     }
-} else if ($chemin == "createGarde") {
+} else if ($chemin == "reateGarde") {
 
     $adresse = $_GET['adresse'];
     $description = $_GET['description'];
@@ -188,7 +128,7 @@ if ($chemin == "") {
     $stmt->bindValue(':proprio', $proprio, SQLITE3_TEXT);
     $stmt->execute();
 
-} else if ($chemin == "createImage") {
+} else if ($chemin == "reateImage") {
     $path = $_GET['path'];
     $nom = $_GET['nom'];
     $utilisateur = $_GET['utilisateur'];
@@ -203,7 +143,7 @@ if ($chemin == "") {
     $stmt->bindValue(':plante', $plante, SQLITE3_TEXT);
     $stmt->execute();
 
-}  else if ($chemin == "createPlante") {
+}  else if ($chemin == "reatePlante") {
 
     $garde = $_GET['garde'];
     $nom = $_GET['nom'];
@@ -214,8 +154,4 @@ if ($chemin == "") {
     $stmt->bindValue(':garde', $garde, SQLITE3_TEXT);
     $stmt->execute();
 
-} 
-
-$conn->close();
-
-?>
+}
