@@ -6,7 +6,7 @@ $url = $_SERVER['REQUEST_URI'];
 $chemin = ltrim(parse_url($url, PHP_URL_PATH));
 
 $chemin = substr($chemin, 30);
-//echo($chemin);
+echo($chemin);
 
 $database = "bdd.db";
 
@@ -18,6 +18,7 @@ if (!$conn) {
 header('Content-Type: application/json');
 
 if ($chemin == "") {
+    echo 'reussie';
 } else if ($chemin == "inscription") {
     $prenom = $_POST['prenom'];
     $nom = $_POST['nom'];
@@ -55,6 +56,8 @@ if ($chemin == "") {
 } else if ($chemin == "connexion") {
     $email = $_POST['email'];
     $mdp = $_POST['mdp'];
+
+    var_dump($mdp, $email);
 
     $query = "SELECT ut_id FROM Utilisateur WHERE ut_email = '$email' AND ut_mdp = '$mdp'";
     //$query = "SELECT name FROM sqlite_master WHERE type='table'";
