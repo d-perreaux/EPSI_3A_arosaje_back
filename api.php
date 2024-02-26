@@ -3,13 +3,14 @@
 
 $url = $_SERVER['REQUEST_URI'];
 
-$chemin = ltrim(parse_url($url, PHP_URL_PATH), '/mspr/back/api.php/');
+$chemin = ltrim(parse_url($url, PHP_URL_PATH));
 
-//echo $chemin;
+$chemin = substr($chemin, 30);
+//echo($chemin);
 
 $database = "bdd.db";
 
-$conn = new SQLite3($database);;
+$conn = new SQLite3($database);
 
 if (!$conn) {
     die("La connexion à la base de données a échoué");
@@ -17,14 +18,13 @@ if (!$conn) {
 header('Content-Type: application/json');
 
 if ($chemin == "") {
-    echo 'success';
 } else if ($chemin == "inscription") {
-    $prenom = $_GET['prenom'];
-    $nom = $_GET['nom'];
-    $email = $_GET['email'];
-    $telephone = $_GET['telephone'];
-    $mdp = $_GET['mdp'];
-    $statut = $_GET['statut'];
+    $prenom = $_POST['prenom'];
+    $nom = $_POST['nom'];
+    $email = $_POST['email'];
+    $telephone = $_POST['telephone'];
+    $mdp = $_POST['mdp'];
+    $statut = $_POST['statut'];
 
     // Préparation de la requête d'insertion
     $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut) VALUES (:prenom, :nom, :email, :telephone, :mdp, :statut)";
@@ -52,7 +52,7 @@ if ($chemin == "") {
         echo json_encode(array('ut_id' => 'refused'));
     }
 
-} else if ($chemin == "onnexion") {
+} else if ($chemin == "connexion") {
     $email = $_POST['email'];
     $mdp = $_POST['mdp'];
 
@@ -85,7 +85,7 @@ if ($chemin == "") {
         echo json_encode(array('return' => 'error'));
     }
 } else if ($chemin == "getUserInfo") {
-    $id = $_GET['id'];
+    $id = $_POST['id'];
     
     $query = "SELECT ut_nom, ut_prenom, ut_statut, ut_email, ut_telephone FROM Utilisateur WHERE ut_id = ". $id;
     $result = $conn->query($query);
@@ -101,7 +101,7 @@ if ($chemin == "") {
     }
 } else if ($chemin == "getMyGarde") {
 
-    $id = $_GET['id'];
+    $id = $_POST['id'];
     
     $query = "SELECT ga_id, ga_adresse, ga_description, fk_utilisateur_proprietaire AS proprio, fk_utilisateur_volontaire AS volontaire FROM Garde WHERE volontaire = ". $id ." OR proprio = ". $id;
     $result = $conn->query($query);
@@ -115,11 +115,13 @@ if ($chemin == "") {
     } else {
         echo json_encode(array('return' => 'error'));
     }
-} else if ($chemin == "reateGarde") {
+    
+} else if ($chemin == "createGarde") {
 
-    $adresse = $_GET['adresse'];
-    $description = $_GET['description'];
-    $proprio = $_GET['proprio'];
+    echo ('test');
+    $adresse = $_POST['adresse'];
+    $description = $_POST['description'];
+    $proprio = $_POST['proprio'];
     
     $query = "INSERT INTO Garde (ga_adresse, ga_description, fk_utilisateur_proprietaire, fk_utilisateur_volontaire) VALUES (:adresse, :description, :proprio, '')";
     $stmt = $conn->prepare($query);
@@ -128,11 +130,11 @@ if ($chemin == "") {
     $stmt->bindValue(':proprio', $proprio, SQLITE3_TEXT);
     $stmt->execute();
 
-} else if ($chemin == "reateImage") {
-    $path = $_GET['path'];
-    $nom = $_GET['nom'];
-    $utilisateur = $_GET['utilisateur'];
-    $plante = $_GET['plante'];
+} else if ($chemin == "createImage") {
+    $path = $_POST['path'];
+    $nom = $_POST['nom'];
+    $utilisateur = $_POST['utilisateur'];
+    $plante = $_POST['plante'];
     
     $query = "INSERT INTO Photo (ph_nom, ph_chemin, fk_utilisateur, fk_plante) VALUES (:nom, :chemin, :utilisateur, :plante)";
     
@@ -143,10 +145,10 @@ if ($chemin == "") {
     $stmt->bindValue(':plante', $plante, SQLITE3_TEXT);
     $stmt->execute();
 
-}  else if ($chemin == "reatePlante") {
+}  else if ($chemin == "createPlante") {
 
-    $garde = $_GET['garde'];
-    $nom = $_GET['nom'];
+    $garde = $_POST['garde'];
+    $nom = $_POST['nom'];
     
     $query = "INSERT INTO Plante (pl_nom, fk_garde) VALUES (:nom, :garde)";
     $stmt = $conn->prepare($query);
@@ -154,4 +156,4 @@ if ($chemin == "") {
     $stmt->bindValue(':garde', $garde, SQLITE3_TEXT);
     $stmt->execute();
 
-}
+} 
