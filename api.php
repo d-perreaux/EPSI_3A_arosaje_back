@@ -114,7 +114,10 @@ function inscription($prenom, $nom, $email, $telephone, $mdp, $statut, $conn){
 }
 
 function gardesLibre($conn){
-    $query = "SELECT ga_id, ga_adresse, ga_description, fk_utilisateur_proprietaire AS proprio, fk_utilisateur_volontaire AS volontaire FROM Garde WHERE volontaire = ''";
+    $query = "SELECT ga_id, ga_adresse, ga_description, ut_prenom
+        FROM Garde
+        JOIN Utilisateur ON fk_utilisateur_proprietaire = ut_id
+        WHERE fk_utilisateur_volontaire = ''";
     $result = $conn->query($query);
 
     if ($result) {
