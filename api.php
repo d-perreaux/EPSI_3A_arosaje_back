@@ -82,6 +82,13 @@ if ($chemin == "") {
     $stmt->bindValue(':garde', $garde, SQLITE3_TEXT);
     $stmt->execute();
 
+}   else if ($chemin == "takeGarde") {
+
+    $idGarde = $_POST['idGarde'];
+    $idUser = $_POST['idUser'];
+    
+    prendreGarde($idGarde, $idUser, $conn);
+
 } 
 
 //Fonctions SQL
@@ -129,7 +136,7 @@ function gardesLibre($conn){
         }
         echo json_encode($rows);
     } else {
-        echo json_encode(array('return' => 'error'));
+        echo json_encode(array('ga_id' => 'error'));
     }
 }
 
@@ -144,7 +151,7 @@ function infosUtilisateur($id, $conn){
         }
         echo json_encode($rows);
     } else {
-        echo json_encode(array('return' => 'error'));
+        echo json_encode(array('ut_nom' => 'error'));
     }
 }
 
@@ -159,7 +166,7 @@ function mesGardes($id, $conn){
         }
         echo json_encode($rows);
     } else {
-        echo json_encode(array('return' => 'error'));
+        echo json_encode(array('ga_id' => 'error'));
     }
 }
 
@@ -186,3 +193,10 @@ function creerGarde($adresse, $description, $proprio, $conn) {
     }
 }
 
+function prendreGarde($idGarde, $idUser, $conn){
+    $query = "UPDATE Garde SET fk_utilisateur_volontaire = :idUser WHERE ga_id = :idGarde;";
+    $stmt = $conn->prepare($query);
+    $stmt->bindValue(':idUser', $idUser, SQLITE3_TEXT);
+    $stmt->bindValue(':idGarde', $idGarde, SQLITE3_TEXT);
+    $stmt->execute();
+}
