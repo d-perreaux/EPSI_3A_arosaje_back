@@ -193,16 +193,19 @@ function creerGarde($adresse, $description, $proprio, $conn) {
 }
 
 function prendreGarde($idGarde, $idUser, $conn){
-    $query = "UPDATE Garde SET fk_utilisateur_volontaire = :idUser WHERE ga_id = :idGarde;";
-    $stmt = $conn->prepare($query);
-    $stmt->bindValue(':idUser', $idUser, SQLITE3_TEXT);
-    $stmt->bindValue(':idGarde', $idGarde, SQLITE3_TEXT);
-    $success = $stmt->execute();
+    try {
+        $query = "UPDATE Garde SET fk_utilisateur_volontaire = :idUser WHERE ga_id = :idGarde;";
+        $stmt = $conn->prepare($query);
+        $stmt->bindValue(':idUser', $idUser, SQLITE3_TEXT);
+        $stmt->bindValue(':idGarde', $idGarde, SQLITE3_TEXT);
+        $success = $stmt->execute();
 
-    if ($success) {
-        echo "Garde prise avec succès.";
-    } else {
-        echo "La prise de garde a échoué.";
+        if ($success) {
+            echo "success";
+        } else {
+            echo "fail";
+        }
+    } catch (Exception $e) {
+        echo "fail : " . $e->getMessage();
     }
-    
 }
