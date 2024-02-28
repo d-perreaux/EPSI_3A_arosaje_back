@@ -83,10 +83,9 @@ if ($chemin == "") {
     $stmt->execute();
 
 }   else if ($chemin == "takeGarde") {
-
     $idGarde = $_POST['idGarde'];
     $idUser = $_POST['idUser'];
-    
+
     prendreGarde($idGarde, $idUser, $conn);
 
 } 
@@ -198,5 +197,12 @@ function prendreGarde($idGarde, $idUser, $conn){
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':idUser', $idUser, SQLITE3_TEXT);
     $stmt->bindValue(':idGarde', $idGarde, SQLITE3_TEXT);
-    $stmt->execute();
+    $success = $stmt->execute();
+
+    if ($success) {
+        echo "Garde prise avec succès.";
+    } else {
+        echo "La prise de garde a échoué.";
+    }
+    
 }
