@@ -86,7 +86,8 @@ if ($chemin == "") {
 
 //Fonctions SQL
 function connexion($email, $mdp, $conn){
-    $query = "SELECT ut_id FROM Utilisateur WHERE ut_email = '$email' AND ut_mdp = '$mdp'";
+    $hash_mdp = hash('sha512', $mdp);
+    $query = "SELECT ut_id FROM Utilisateur WHERE ut_email = '$email' AND ut_mdp = '$hash_mdp'";
     $result = $conn->query($query);
 
     if ($result) {
@@ -102,13 +103,14 @@ function connexion($email, $mdp, $conn){
 }
 
 function inscription($prenom, $nom, $email, $telephone, $mdp, $statut, $conn){
+    $hash_mdp = hash('sha512', $mdp);
     $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut) VALUES (:prenom, :nom, :email, :telephone, :mdp, :statut)";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':prenom', $prenom, SQLITE3_TEXT);
     $stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
     $stmt->bindValue(':email', $email, SQLITE3_TEXT);
     $stmt->bindValue(':telephone', $telephone, SQLITE3_TEXT);
-    $stmt->bindValue(':mdp', $mdp, SQLITE3_TEXT);
+    $stmt->bindValue(':mdp', $hash_mdp, SQLITE3_TEXT);
     $stmt->bindValue(':statut', $statut, SQLITE3_TEXT);
     $stmt->execute();
 }
