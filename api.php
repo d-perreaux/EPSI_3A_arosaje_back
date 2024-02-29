@@ -25,9 +25,9 @@ if ($chemin == "") {
     $email = $_POST['email'];
     $telephone = $_POST['telephone'];
     $mdp = $_POST['mdp'];
-    $statut = $_POST['statut'];
+    $avatar = $_POST['avatar'];
 
-    inscription($prenom, $nom, $email, $telephone, $mdp, $statut, $conn);
+    inscription($prenom, $nom, $email, $telephone, $mdp, $avatar, $conn);
     connexion($email, $mdp, $conn);
 
 } else if ($chemin == "connexion") {
@@ -108,16 +108,16 @@ function connexion($email, $mdp, $conn){
     }
 }
 
-function inscription($prenom, $nom, $email, $telephone, $mdp, $statut, $conn){
+function inscription($prenom, $nom, $email, $telephone, $mdp, $avatar, $conn){
     $hash_mdp = hash('sha512', $mdp);
-    $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut) VALUES (:prenom, :nom, :email, :telephone, :mdp, :statut)";
+    $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut, ut_avatar) VALUES (:prenom, :nom, :email, :telephone, :mdp, 0, :avatar)";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':prenom', $prenom, SQLITE3_TEXT);
     $stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
     $stmt->bindValue(':email', $email, SQLITE3_TEXT);
     $stmt->bindValue(':telephone', $telephone, SQLITE3_TEXT);
     $stmt->bindValue(':mdp', $hash_mdp, SQLITE3_TEXT);
-    $stmt->bindValue(':statut', $statut, SQLITE3_TEXT);
+    $stmt->bindValue(':avatar', $avatar, SQLITE3_TEXT);
     $stmt->execute();
 }
 
