@@ -110,7 +110,7 @@ function connexion($email, $mdp, $conn){
 
 function inscription($prenom, $nom, $email, $telephone, $mdp, $avatar, $conn){
     $hash_mdp = hash('sha512', $mdp);
-    $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut, ut_avatar) VALUES (:prenom, :nom, :email, :telephone, :mdp, 0, :avatar)";
+    $query = "INSERT INTO Utilisateur (ut_prenom, ut_nom, ut_email, ut_telephone, ut_mdp, ut_statut, ut_avatar) VALUES (:prenom, :nom, :email, :telephone, :mdp, '0', :avatar)";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':prenom', $prenom, SQLITE3_TEXT);
     $stmt->bindValue(':nom', $nom, SQLITE3_TEXT);
@@ -140,7 +140,7 @@ function gardesLibre($conn){
 }
 
 function infosUtilisateur($id, $conn){
-    $query = "SELECT ut_nom, ut_prenom, ut_statut, ut_email, ut_telephone FROM Utilisateur WHERE ut_id = ". $id;
+    $query = "SELECT ut_nom, ut_prenom, ut_statut, ut_email, ut_telephone, ut_avatar FROM Utilisateur WHERE ut_id = ". $id;
     $result = $conn->query($query);
 
     if ($result) {
