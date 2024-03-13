@@ -146,6 +146,7 @@ function infosUtilisateur($id, $conn){
     if ($result) {
         $rows = array();
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $row['ut_avatar'] = base64_encode($row['ut_avatar']);
             $rows[] = $row;
         }
         echo json_encode($rows);
